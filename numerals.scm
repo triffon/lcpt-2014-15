@@ -177,3 +177,70 @@
 (print (c-1 (c 100)))
 (print (c-1 (c 0)))
 
+(define Y
+  (lambda (f)
+    ((lambda (x)
+       (f (x x)))
+     (lambda (x)
+       (f (x x))))))
+
+;; (define T
+;;   (lambda (f)
+;;     ((lambda (x)
+;;        (lambda (y)
+;; 	 ((f (x x)) y)))
+;;      (lambda (x)
+;;        (lambda (y)
+;; 	 ((f (x x)) y))))))
+;; не работи! η-експанзията трябва да е по-навътре...
+
+(define T
+  (lambda (f)
+    ((lambda (x)
+       (f
+	(lambda (y)
+	  ((x x) y))))
+     (lambda (x)
+       (f
+	(lambda (y)
+	  ((x x) y)))))))
+
+; проблем с cif!
+; заради стриктното оценяване в Scheme, се оценяват и двата аргумента,
+; което води до безкрайна рекурсия, ако единият аргумент е рекурсивно извикване
+; (print (((cif true) (c 1)) (Y (lambda (x) x))))
+
+; как се решава проблема в Scheme?
+(define (f x) (f x))
+; (f 1) -> забива
+
+; прави се η-експанзия
+(define (g x) (lambda (y) ((g x) y)))
+; (g 1) -> не забива
+
+; решение: прави се η-експанзия на аргументите на if, които биха довели до безкрайна рекурсия
+(print (((cif true)
+	 (c 1))
+	(lambda (y)
+	  ((Y (lambda(x) x)) y))))
+
+(print (((cif false)
+	 (lambda (y)
+	   ((Y (lambda(x) x)) y)))
+	(c 2)))
+
+; така вече можем да дефинираме факториел рекурсивно
+(define factop
+  (lambda (f)
+    (lambda (n)
+      (((cif
+	 (czero n))
+	(c 1))
+       (lambda (z)
+	 (((c*
+	    n)
+	   (f (c-1 n)))
+	  z))))))
+
+(define fact (T factop))
+(print (fact (c 7)))
