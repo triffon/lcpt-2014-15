@@ -60,3 +60,59 @@
       (n m))))
 
 (print ((c^^ (c 2)) (c 8)))
+
+(define true
+  (lambda (x)
+    (lambda (y)
+      x)))
+
+(define false
+  (lambda (x)
+    (lambda (y)
+      y)))
+
+(define cif
+  (lambda (p)
+    p))
+
+(define (printbool p)
+  ((p #t) #f))
+
+(define czero
+  (lambda (n)
+    ((n
+      (lambda (p) false))
+     true)))
+
+(printbool (czero (c 0)))
+(printbool (czero (c 10)))
+
+(define cnzero
+  (lambda (n)
+    ((n
+      (lambda (p) true))
+      false)))
+
+(printbool (cnzero (c 0)))
+(printbool (cnzero (c 10)))
+
+(define c!
+  (lambda (p)
+    ((p false) true)))
+
+(printbool (c! true))
+(printbool (c! false))
+
+(define c&
+  (lambda (p)
+    (lambda (q)
+      ((p q) false))))
+
+(define c_
+  (lambda (p)
+    (lambda (q)
+      ((p true) q))))
+
+(printbool ((c& true) false))
+(printbool ((c_ true) false))
+
