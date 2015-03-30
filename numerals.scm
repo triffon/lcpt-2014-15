@@ -116,3 +116,64 @@
 (printbool ((c& true) false))
 (printbool ((c_ true) false))
 
+(define ccar
+  (lambda (z)
+    (z true)))
+
+(define ccdr
+  (lambda (z)
+    (z false)))
+
+(define ccons
+  (lambda (x)
+    (lambda (y)
+      (lambda (z)
+	((z x) y)))))
+
+(define (printnpair z)
+  (cons (print (ccar z))
+	(print (ccdr z))))
+
+(define z23 ((ccons (c 2)) (c 3)))
+(print (ccar z23))
+(print (ccdr z23))
+(printnpair z23)
+
+(define c+1
+  (lambda (n)
+    (lambda (f)
+      (lambda (x)
+	((n f) (f x))))))
+
+(print (c+1 (c 5)))
+
+(define cfact
+  (lambda (n)
+    (ccar
+     ((n
+       (lambda (z)
+	 ((lambda (k)
+	    ((ccons
+	      ((c*
+		(ccar z)) ; (k-1)!
+	       k))
+	     k))
+	  (c+1 (ccdr z)))));  стъпка
+      ((ccons (c 1)) (c 0)))))) ; база
+  
+(print (cfact (c 10)))
+
+(define c-1
+  (lambda (n)
+    (ccar
+     ((n
+       (lambda (z)
+	 ((ccons
+	   (ccdr z))
+	  (c+1
+	   (ccdr z))))) ; стъпка
+       ((ccons (c 0)) (c 0))))))
+
+(print (c-1 (c 100)))
+(print (c-1 (c 0)))
+
