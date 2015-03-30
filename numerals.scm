@@ -42,3 +42,21 @@
 ;;     (lambda (b)
 ;;       (lambda (f)
 ;; 	((a f) (b f))))))
+
+(define c^
+  (lambda (m)
+    (lambda (n)
+      ((n
+	(lambda (p)
+	  (lambda (f)
+	    (m (p f)))))
+       (lambda (f) f)))))
+
+(print ((c^ (c 2)) (c 8)))
+
+(define c^^
+  (lambda (m)
+    (lambda (n)
+      (n m))))
+
+(print ((c^^ (c 2)) (c 8)))
